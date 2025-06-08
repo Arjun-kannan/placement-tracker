@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import api from '../api';
+import './StudentApplyForm.css';
 
 function StudentApplyForm() {
   const [form, setForm] = useState({
+    rollNumber: '',
     studentName: '',
     companyName: '',
     type: '',
@@ -18,7 +20,7 @@ function StudentApplyForm() {
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    await api.post('/student/apply', updatedForm);
+    await api.post('/student/apply', form);
     alert('Application submitted!');
   } catch (error) {
     console.error('Submission failed:', error);

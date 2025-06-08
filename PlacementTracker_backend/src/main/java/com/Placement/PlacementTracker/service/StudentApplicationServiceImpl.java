@@ -3,6 +3,9 @@ package com.Placement.PlacementTracker.service;
 import com.Placement.PlacementTracker.model.StudentApplication;
 import com.Placement.PlacementTracker.repository.StudentApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,18 +25,21 @@ public class StudentApplicationServiceImpl implements StudentApplicationService{
     }
 
     @Override
-    public List<StudentApplication> getAllApplications() {
-        return applicationRepository.findAll();
+    public Page<StudentApplication> getAllApplications(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return applicationRepository.findAll(pageable);
     }
 
     @Override
-    public List<StudentApplication> getApplicationsByStudent(String studentName) {
-        return applicationRepository.findByStudentName(studentName);
+    public Page<StudentApplication> getApplicationsByStudent(String studentName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return applicationRepository.findByStudentName(studentName, pageable);
     }
 
     @Override
-    public List<StudentApplication> getApplicationsByCompany(String companyName) {
-        return applicationRepository.findByStudentName(companyName);
+    public Page<StudentApplication> getApplicationsByCompany(String companyName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return applicationRepository.findByCompanyName(companyName, pageable);
     }
 
     @Override
@@ -45,12 +51,14 @@ public class StudentApplicationServiceImpl implements StudentApplicationService{
     }
 
     @Override
-    public List<StudentApplication> getApplicationsByStatus(String status) {
-        return applicationRepository.getApplicationByStatus(status);
+    public Page<StudentApplication> getApplicationsByStatus(String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return applicationRepository.findByStatus(status, pageable);
     }
 
     @Override
-    public List<StudentApplication> getAllApplicationsByStatusAndCompany(String status, String company) {
-        return applicationRepository.getAllApplicationsByStatusAndCompany(status, company);
+    public Page<StudentApplication> getAllApplicationsByStatusAndCompany(String status, String company, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return applicationRepository.findByStatusAndCompany(status, company, pageable);
     }
 }

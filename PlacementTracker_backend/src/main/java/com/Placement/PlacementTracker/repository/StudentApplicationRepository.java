@@ -1,21 +1,22 @@
 package com.Placement.PlacementTracker.repository;
 
 import com.Placement.PlacementTracker.model.StudentApplication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface StudentApplicationRepository extends JpaRepository<StudentApplication, Long> {
 
-    @Query(value = "SELECT * from student_application WHERE studentName = studentName", nativeQuery = true)
-    List<StudentApplication> findByStudentName(String studentName);
+    Page<StudentApplication> findByStudentName(String studentName, Pageable pageable);
 
-    @Query(value = "SELECT * from student_application WHERE status = status AND companyName = company", nativeQuery = true)
-    List<StudentApplication> getAllApplicationsByStatusAndCompany(String status, String company);
+    @Query(value = "SELECT * from student_application WHERE status = :status AND company_name = :company", nativeQuery = true)
+    Page<StudentApplication> findByStatusAndCompany(@Param("status") String status, @Param("company")String company, Pageable pageable);
 
-    @Query(value = "SELECT * from student_application WHERE status = status", nativeQuery = true)
-    List<StudentApplication> getApplicationByStatus(String status);
+    Page<StudentApplication> findByStatus(String status, Pageable pageable);
+
+    Page<StudentApplication> findByCompanyName(String companyName, Pageable pageable);
 }
