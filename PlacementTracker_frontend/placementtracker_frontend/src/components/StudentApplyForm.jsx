@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api';
 import './StudentApplyForm.css';
+import { useNavigate } from 'react-router-dom';
 
 function StudentApplyForm() {
   const [form, setForm] = useState({
@@ -12,6 +13,7 @@ function StudentApplyForm() {
     ctc: '',
     status: 'Pending',
   });
+  const navigate = useNavigate();
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,6 +24,7 @@ const handleSubmit = async (e) => {
   try {
     await api.post('/student/apply', form);
     alert('Application submitted!');
+    navigate('/student'); // Redirect to student applications page
   } catch (error) {
     console.error('Submission failed:', error);
     alert('Failed to submit application.');

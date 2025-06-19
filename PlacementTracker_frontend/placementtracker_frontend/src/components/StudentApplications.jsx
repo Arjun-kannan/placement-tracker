@@ -1,36 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import './StudentApplications.css';
+import { useNavigate } from 'react-router-dom';
 
 function StudentApplications() {
   const [apps, setApps] = useState([]);
-  const [name, setName] = useState('');
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const navigate = useNavigate();
 
-  const fetchApplications = async () => {
-    console.log('Fetching applications for:', name);
-    if (!name) {
-      alert('Please enter your name');
-      return;
-    }
-    const res = await api.get(`/student/applications/${name}?page=${page}&size=5`);
-    setApps(res.data.content);
-    setTotalPages(res.data.totalPages);
-  };
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        console.log('Fetching applications');
+        const res = await api.get(`/student/applications/me?page=${page}&size=5`);
+        setApps(res.data.content);
+        setTotalPages(res.data.totalPages);
+      } catch (error) {
+        console.error('Error fetching applications:', error);
+      }
+    };
+    fetchApplications();
+  }, [page]);
+
 
   return (
     <div className="student-container">
       <h2>Your Applications</h2>
-      <div className="input-group">
-        <input
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="Enter your name"
-        />
-        <button onClick={fetchApplications}>View Applications</button>
-      </div>
-
       <ul className="application-list">
         {apps.map(app => (
           <li key={app.id} className="application-item">
@@ -45,11 +41,15 @@ function StudentApplications() {
 
       {/* Pagination controls */}
       <div>
-        <button disabled={page <= 0} onClick={() => setPage(page - 1)}>Previous</button>
+        {page > 0 && (
+          <button onClick={() => setPage(page - 1)}>Previous</button>
+        )}
         <span> Page {page + 1} of {totalPages} </span>
-        <button disabled={page + 1 >= totalPages} onClick={() => setPage(page + 1)}>Next</button>
+        {page + 1 < totalPages && (
+          <button onClick={() => setPage(page + 1)}>Next</button>
+        )}
       </div>
-
+      <button onClick={() => navigate('/')}>Back to Home</button>
     </div>
   );
 }
