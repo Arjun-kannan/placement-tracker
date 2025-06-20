@@ -50,21 +50,21 @@
   transition: background-color 0.2s ease;
 }
 
-.app-actions button:first-child {
+.approve-button{
   background-color: #28a745;
   color: white;
 }
 
-.app-actions button:first-child:hover {
+.approve-button:hover {
   background-color: #218838;
 }
 
-.app-actions button:last-child {
+.reject-button {
   background-color: #dc3545;
   color: white;
 }
 
-.app-actions button:last-child:hover {
+.reject-button:hover {
   background-color: #c82333;
 }
 

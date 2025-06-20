@@ -5,7 +5,7 @@ import api from '../api'; // ✅ Import centralized API instance
 
 function Register() {
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', password: ''
+    rollNumber: '', name: '', email: '', password: ''
   });
   const navigate = useNavigate();
 
@@ -25,12 +25,12 @@ function Register() {
       <div className="register-box">
         <h2>Register</h2>
         <input
-          placeholder="First Name"
-          onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+          placeholder="Roll Number"
+          onChange={(e) => setForm({ ...form, rollNumber: e.target.value })}
         /><br />
         <input
-          placeholder="Last Name"
-          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+          placeholder="Name"
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
         /><br />
         <input
           placeholder="Email"

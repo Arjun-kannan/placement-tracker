@@ -9,6 +9,7 @@ import Register from './components/Register';
 import './AppWrapper.css';
 import { AuthContext } from './AuthContext'; // Import AuthContext
 import { useNavigate } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
 
 
 function AppWrapper() {
@@ -49,9 +50,21 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} /> {/* Login route */}
             <Route path="/register" element={<Register />} />
-            <Route path="/apply" element={<StudentApplyForm />} />
-            <Route path="/student" element={<StudentApplications />} />
-            <Route path="/admin/all" element={<AdminApplications />} />
+            <Route path="/apply" element={
+              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
+                <StudentApplyForm />
+              </ProtectedRoute>
+              } />
+            <Route path="/student" element={
+              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
+                <StudentApplications />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/all" element={
+              <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+                <AdminApplications />
+              </ProtectedRoute>
+            } />
           </Routes>
         </div>
   );
