@@ -9,7 +9,7 @@
 
 .register-box {
   background-color: #fff;
-  padding: 40px 30px;
+  padding: 10px 20px 30px 20px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   width: 350px;
@@ -22,14 +22,13 @@
 }
 
 .register-box input {
-  width: 100%;
-  padding: 10px 12px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+    width: 90%;
+    padding: 10px 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
 }
-
 .register-box input:focus {
   border-color: #3498db;
   outline: none;
@@ -48,4 +47,10 @@
 
 .register-box button:hover {
   background-color: #2980b9;
+}
+
+.error {
+  color: red;
+  font-size: 0.9em;
+  margin: 1px 0 1px 0;
 }

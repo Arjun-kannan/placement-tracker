@@ -33,12 +33,16 @@ function Home() {
             <div className='home-buttons'>
                 {role === 'STUDENT' && (
                     <>
-                        <button onClick={() => navigate('/apply')}>Apply Now</button>
+                        <button onClick={() => navigate('/student/company')}>Apply Now</button>
                         <button onClick={() => navigate('/student')}>My Applications</button>
                     </>
                 )}
                 {role === 'ADMIN' && (
-                    <button onClick={() => navigate('/admin/all')}>View All Applications</button>
+                    <>
+                        <button onClick={() => navigate('/admin/company/add')}>Add new Company</button>
+                        <button onClick={() => navigate('/admin/company')}>View all Companies</button>
+                        {/* <button onClick={() => navigate('/admin/all')}>View All Applications</button> */}
+                    </>
                 )}
             </div>
         </div>

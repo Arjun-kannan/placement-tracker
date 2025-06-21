@@ -11,6 +11,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     }
     if(!allowedRoles.includes(role)) {
         // If role is not allowed, redirect to home
+        console.warn(`Access denied for role: ${role}`);
         return <Navigate to="/"/>;
     }
 
