@@ -1,10 +1,11 @@
-package com.Placement.PlacementTracker.authentication.authuser;
+package com.Placement.PlacementTracker.authentication.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -24,8 +25,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String firstName;
-    private String lastName;
+    private String rollNumber;
+    private String name;
+
     private String email;
     private String password;
 

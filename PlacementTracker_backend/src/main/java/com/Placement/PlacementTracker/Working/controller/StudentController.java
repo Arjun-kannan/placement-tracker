@@ -1,35 +1,79 @@
-package com.Placement.PlacementTracker.controller;
+package com.Placement.PlacementTracker.Working.controller;
 
-import com.Placement.PlacementTracker.model.StudentApplication;
-import com.Placement.PlacementTracker.service.StudentApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Placement.PlacementTracker.Working.dto.CompanyNotificationResponse;
+import com.Placement.PlacementTracker.Working.model.CompanyNotification;
+import com.Placement.PlacementTracker.Working.model.StudentDetails;
+import com.Placement.PlacementTracker.Working.repository.StudentApplicationRepository;
+import com.Placement.PlacementTracker.Working.service.CompanyNotificationService;
+import com.Placement.PlacementTracker.Working.service.StudentApplicationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('STUDENT')")
 @RequestMapping("/student")
 public class StudentController {
 
-    @Autowired
-    private StudentApplicationService applicationService;
+    private final CompanyNotificationService notificationService;
+    private final StudentApplicationService applicationService;
 
-    @PostMapping("/apply")
-    public StudentApplication addApplication(@RequestBody StudentApplication application){
-        System.out.println(application);
-        return applicationService.apply(application);
-    }
-
-    @GetMapping("/applications/{studentName}")
-    public ResponseEntity<Page<StudentApplication>> viewAllApplicationsByStudent(
-            @PathVariable String studentName,
+    @GetMapping("/company")
+    public ResponseEntity<Page<CompanyNotificationResponse>> getCompanies(
+            @AuthenticationPrincipal StudentDetails student,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size){
-        return new ResponseEntity<>(applicationService.getApplicationsByStudent(studentName, page, size), HttpStatus.OK);
+            @RequestParam(defaultValue = "6") int size
+            ){
+        return ResponseEntity.ok(notificationService.findAllCompanies(student, page, size));
     }
 
+    @PostMapping("/apply/{company_id}")
+    public ResponseEntity<?> applyToCompany(
+            @AuthenticationPrincipal StudentDetails student,
+            @PathVariable int company_id
+    ){
+        applicationService.applyToCompany(company_id, student);
+        return ResponseEntity.ok("applied successfully");
+    }
+
+    @DeleteMapping("/withdraw/{company_id}")
+    public ResponseEntity<?> withdrawFromCompany(
+            @AuthenticationPrincipal StudentDetails student,
+            @PathVariable int company_id
+    ){
+        applicationService.withdrawFromCompany(company_id, student);
+        return ResponseEntity.ok("Application removed successfully");
+    }
+
+
+
+
+
+
+
+
+
+
+
+//    @Deprecated
+//    @PostMapping("/apply")
+//    public StudentApplication addApplication(@RequestBody StudentApplication application){
+//        System.out.println(application);
+//        return applicationService.apply(application);
+//    }
+//
+//    @Deprecated
+//    @GetMapping("/applications/me")
+//    public ResponseEntity<Page<StudentApplication>> viewAllApplicationsByStudent(
+//            @AuthenticationPrincipal User currentUser,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "5") int size){
+//        System.out.println("Current user: " + currentUser.getName());
+//        return new ResponseEntity<>(applicationService.getApplicationsByStudent(currentUser.getName(), page, size), HttpStatus.OK);
+//    }
 
 }

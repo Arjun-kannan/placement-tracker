@@ -1,4 +1,4 @@
-package com.Placement.PlacementTracker.authentication.authuser;
+package com.Placement.PlacementTracker.authentication.model;
 
 public enum Role {
     ADMIN,

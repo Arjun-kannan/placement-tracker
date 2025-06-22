@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import './login.css';
+import './Login.css';
 import { AuthContext } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../api'; // ✅ Import centralized API instance

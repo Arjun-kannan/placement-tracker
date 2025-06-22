@@ -1,13 +1,14 @@
 package com.Placement.PlacementTracker.authentication.auth;
 
+import com.Placement.PlacementTracker.Working.model.StudentDetails;
 import com.Placement.PlacementTracker.authentication.config.ApplicationConfig;
 import com.Placement.PlacementTracker.authentication.service.JwtService;
-import com.Placement.PlacementTracker.model.Role;
-import com.Placement.PlacementTracker.model.User;
-import com.Placement.PlacementTracker.model.UserRepository;
+import com.Placement.PlacementTracker.authentication.model.Role;
+import com.Placement.PlacementTracker.authentication.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,11 +21,14 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+        var user = StudentDetails.builder()
+                .name(request.getName())
                 .email(request.getEmail())
                 .password(applicationConfig.passwordEncoder().encode(request.getPassword()))
+                .rollNumber(request.getRollNumber())
+                .cgpa(request.getCgpa())
+                .activeBacklog(request.getActiveBacklog())
+                .backlogHistory(request.isBacklogHistory())
                 .role(Role.STUDENT)
                 .build();
         userRepository.save(user);
@@ -48,7 +52,7 @@ public class AuthenticationService {
             throw e;
         }
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));;
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)

@@ -1,28 +1,33 @@
-package com.Placement.PlacementTracker.model;
+package com.Placement.PlacementTracker.Working.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.CurrentTimestamp;
+
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Builder
+@Data
 public class StudentApplication {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
-    private String rollNumber;
-    private String studentName;
-    private String companyName;
-    private String type; //placement or internship
-    private String role;
-    private double ctc;
-    private String status; // Pending, Approved, Rejected
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyNotification company;
+
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private StudentDetails student;
+
+    @Temporal(TemporalType.DATE)
+    @CreationTimestamp
+    private Date applied_at;
+
 }

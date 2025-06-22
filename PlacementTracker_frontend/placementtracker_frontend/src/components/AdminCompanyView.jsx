@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import './CompanyView.css';
+import { AuthContext } from '../AuthContext';
 
 function AdminCompanyView() {
     const [companies, setCompanies] = useState([]);
     const [error, setError] = useState('');
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+
+    const { token } = React.useContext(AuthContext);
 
     useEffect(() => {
         const fetchCompanies = async () => {
@@ -22,6 +25,34 @@ function AdminCompanyView() {
 
         fetchCompanies();
     }, [page]);
+
+    const handleExport = async (companyId, companyName) => {
+  try {
+    const response = await api.get(`/admin/company/${companyId}/export`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      responseType: 'blob', 
+    });
+
+    const blob = new Blob([response.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `applicants_company_${companyName}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Failed to export data:', error);
+    alert(`Failed to export data. Server responded with status ${error?.response?.status}`);
+  }
+};
+
 
     return (
         <div className="company-container">
@@ -54,18 +85,23 @@ function AdminCompanyView() {
                                 <p><strong>CTC Slab:</strong> {company.slab}</p>
                                 <p><strong>Valid Till:</strong> {formattedDate}</p>
                                 <p><strong>Application Count:</strong> {company.applicationCount}</p>
+                                {/* <ExportButton companyId={company.id} /> */}
+                                <button onClick={() => handleExport(company.id, company.companyName)} className="download-button">
+                                    Export Excel
+                                </button>
                             </div>
                         );
                     })}
                 </div>
-            )}
+            )
+            }
 
             <div className="pagination">
                 <button disabled={page <= 0} onClick={() => setPage(page - 1)}>Previous</button>
                 <span> Page {page + 1} of {totalPages} </span>
                 <button disabled={page + 1 >= totalPages} onClick={() => setPage(page + 1)}>Next</button>
             </div>
-        </div>
+        </div >
     );
 
 }

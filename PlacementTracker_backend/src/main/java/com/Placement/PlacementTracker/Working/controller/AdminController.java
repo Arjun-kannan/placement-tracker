@@ -1,57 +1,47 @@
-package com.Placement.PlacementTracker.controller;
+package com.Placement.PlacementTracker.Working.controller;
 
-import com.Placement.PlacementTracker.model.StudentApplication;
-import com.Placement.PlacementTracker.service.StudentApplicationService;
+import com.Placement.PlacementTracker.Working.dto.CompanyNotificationResponse;
+import com.Placement.PlacementTracker.Working.model.CompanyNotification;
+import com.Placement.PlacementTracker.Working.service.CompanyNotificationService;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/admin")
 public class AdminController {
 
     @Autowired
-    private StudentApplicationService applicationService;
+    private final CompanyNotificationService adminService;
 
-    @GetMapping("/applications")
-    public ResponseEntity<Page<StudentApplication>> filterApplications(
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String company,
+    @PostMapping("/company/add")
+    public ResponseEntity<CompanyNotification> addCompany(@RequestBody CompanyNotification notification){
+        return ResponseEntity.ok(adminService.addCompany(notification));
+    }
+
+    @GetMapping("/company")
+    public ResponseEntity<Page<CompanyNotificationResponse>> findAllCompanies(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
-    ) {
-        if (status != null && company != null)
-            return new ResponseEntity<>(applicationService.getAllApplicationsByStatusAndCompany(status, company, page, size), HttpStatus.OK);
-        else if (status != null)
-            return new ResponseEntity<>(applicationService.getApplicationsByStatus(status, page, size), HttpStatus.OK);
-        else if (company != null)
-            return new ResponseEntity<>(applicationService.getApplicationsByCompany(company, page, size), HttpStatus.OK);
-        else
-            return new ResponseEntity<>(applicationService.getAllApplications(page, size), HttpStatus.OK);
+    ){
+        return ResponseEntity.ok(adminService.findAllCompanies(page, size));
     }
 
-    @PutMapping("/applications/{id}")
-    public ResponseEntity<StudentApplication> updateStatus(@PathVariable Long id,
-                                                           @RequestBody Map<String, String> body) {
-        return new ResponseEntity<>(applicationService.updateApplicationStatus(id, body.get("status")), HttpStatus.OK);
+    @GetMapping("/company/{company_id}/export")
+    public void exportCompanyApplicants(
+            @PathVariable int company_id,
+            HttpServletResponse response
+    ) throws IOException {
+        adminService.exportCompanyApplicants(company_id, response);
+        return;
     }
-
-    @GetMapping("/applications/company/{companyName}")
-    public ResponseEntity<Page<StudentApplication>> viewApplicationsByCompany(@PathVariable String companyName,
-                                                                              @RequestParam(defaultValue = "0") int page,
-                                                                              @RequestParam(defaultValue = "5") int size) {
-        return new ResponseEntity<>(applicationService.getApplicationsByCompany(companyName, page, size), HttpStatus.OK);
-    }
-
-    @GetMapping("/applications/pending")
-    public ResponseEntity<Page<StudentApplication>>  viewPendingApplication(@RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "5") int size) {
-        return new ResponseEntity<>(applicationService.getApplicationsByStatus("pending", page, size), HttpStatus.OK);
-    }
-
 }

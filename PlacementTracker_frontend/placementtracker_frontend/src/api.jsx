@@ -1,8 +1,11 @@
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_REACT_APP_API_URL || "http://localhost:8080";
+
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL
 });
+
 
 // Add a request interceptor to include the token in the headers
 api.interceptors.request.use(
