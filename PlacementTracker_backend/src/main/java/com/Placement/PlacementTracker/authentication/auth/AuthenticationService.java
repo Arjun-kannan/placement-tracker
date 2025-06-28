@@ -59,4 +59,12 @@ public class AuthenticationService {
                 .role(user.getRole().toString())
                 .build();
     }
+
+    public Boolean checkRollNumberExists(String rollNumber) {
+        return userRepository.existsByRollNumber(rollNumber);
+    }
+
+    public Boolean checkEmailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

@@ -26,6 +26,8 @@ public class CompanyNotificationResponse {
         private int validity;
         @JsonProperty("eligible")
         private boolean isEligible;
+        @JsonProperty("valid")
+        private boolean isValid;
         private boolean hasApplied;
         private long applicationCount;
 }

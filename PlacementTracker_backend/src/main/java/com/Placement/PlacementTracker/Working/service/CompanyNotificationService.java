@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -94,6 +95,8 @@ public class CompanyNotificationService {
             // Check if student has applied
             boolean hasApplied = checkHasApplied(student.getId(), company.getId(), studentApplications);
 
+            boolean isValid = checkValidity(company);
+
             // Get application count (you might want to cache this if it's expensive)
             int applicationCount = company.getApplicationCount();
 
@@ -110,9 +113,22 @@ public class CompanyNotificationService {
                     .validity(company.getValidity())
                     .isEligible(isEligible)
                     .hasApplied(hasApplied)
+                    .isValid(isValid)
                     .applicationCount(applicationCount)
                     .build();
         });
+    }
+
+    private boolean checkValidity(CompanyNotification company) {
+        Date postedTime = company.getTimestamp();
+        int validity = company.getValidity();
+
+        Calendar expiry = Calendar.getInstance();
+        expiry.setTime(postedTime);
+        expiry.add(Calendar.HOUR, validity);
+
+        Date now = new Date();
+        return now.before(expiry.getTime());
     }
 
     private boolean checkEligibility(StudentDetails student, CompanyNotification company) {

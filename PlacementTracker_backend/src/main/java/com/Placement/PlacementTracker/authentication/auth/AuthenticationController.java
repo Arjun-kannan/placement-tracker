@@ -26,5 +26,13 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
-    
+    @GetMapping("/check-roll")
+    public ResponseEntity<Boolean> checkRollNumberExists(@RequestParam String rollNumber){
+        return ResponseEntity.ok(authenticationService.checkRollNumberExists(rollNumber));
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmailExists(@RequestParam String email){
+        return ResponseEntity.ok(authenticationService.checkEmailExists(email));
+    }
 }
