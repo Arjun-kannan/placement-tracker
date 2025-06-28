@@ -1,21 +1,35 @@
-# Stage 1: Build the Vite frontend
-FROM node:18 AS build
-WORKDIR /app
+# syntax=docker/dockerfile:1
 
-# Copy only the inner actual frontend
-COPY placementtracker_frontend/package*.json ./placementtracker_frontend/
-WORKDIR /app/placementtracker_frontend
+ARG NODE_VERSION=20.10.0
 
-RUN npm install
+################################################################################
+# ⬇️ Base Stage – Use Node to build the app
+FROM node:${NODE_VERSION}-alpine as build
 
-COPY placementtracker_frontend/. ./   
+# Set working directory
+WORKDIR /usr/src/app
 
+# Copy dependencies files
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of the source code
+COPY . .
+
+# Build the app (output goes to /usr/src/app/dist)
 RUN npm run build
 
-# Stage 2: Serve the built app using nginx
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+################################################################################
+# ⬇️ Final Stage – Serve with Nginx
+FROM nginx:alpine as production
 
+# Copy built Vite app to Nginx’s html directory
+COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+
+# Expose port (use 80 because Nginx serves on 80)
 EXPOSE 80
+
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
